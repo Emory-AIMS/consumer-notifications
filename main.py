@@ -4,28 +4,13 @@ import boto3
 import config
 import android_push_notification
 import ios_push_notification
-
-BULK_SIZE = 1000
-
-
-def get_warning_level(status):
-    if status == 0:
-        return 0
-    if status == 1:
-        return 4
-    if status == 2:
-        return 2
-    if status == 3:
-        return 1
-    return 3
+from utils_notifications import get_warning_level
 
 
 def polling_queue():
-    sqs_client = boto3.client('sqs',
-                      aws_access_key_id=config.get_aws_key(),
-                      aws_secret_access_key=config.get_aws_secret())
+    sqs_client = boto3.resource('sqs')
 
-    queue_read = sqs_client.get_queue_by_name(QueueName=config.get_sqs_notifications_name())
+    queue_read = sqs_client.Queue(config.get_sqs_notifications_name())
 
     while 1:
         messages = queue_read.receive_messages(WaitTimeSeconds=20)

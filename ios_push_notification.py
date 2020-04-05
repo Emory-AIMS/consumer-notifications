@@ -1,20 +1,19 @@
 
-import os
 import os.path
 import time
 import json
 import jwt
+import config
 from datetime import datetime
 from hyper import HTTPConnection
 
 TOKEN_FILE = os.getcwd() + '/token.json'
-APNS_AUTH_KEY = os.getcwd() + '/AuthKey_MCV86KYH9U.p8'
+
 ALGORITHM = 'ES256'
 APNS_KEY_ID = 'MCV86KYH9U'
 TEAM_ID = '652YXNAPUW'
 BUNDLE_ID = 'org.covidapp-coronavirus-outbreak-control.ios'
 SECONDS_DURATION_TOKEN = 3600
-__token = None
 
 # http://gobiko.com/blog/token-based-authentication-http2-example-apns/
 # https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns
@@ -22,31 +21,9 @@ __token = None
 # https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns
 
 
-def save_token(token_obj):
-    with open(TOKEN_FILE, 'w') as f:
-        f.write(json.dumps(token_obj))
-
-
-def read_token():
-    if not os.path.exists(TOKEN_FILE):
-        return None
-    with open(TOKEN_FILE, 'r') as f:
-        try:
-            j = json.load(f)
-        except json.JSONDecodeError:
-            # empty file
-            return None
-        if j is None or 'token' not in j:
-            return None
-        if datetime.fromtimestamp(j['unix_elapsed_time']) < datetime.now():
-            return None
-        return j
-
-
 def generate_token():
 
-    f = open(APNS_AUTH_KEY)
-    secret = f.read()
+    secret = config.get_auth_secret()
 
     tkn = jwt.encode(
         {
@@ -65,19 +42,12 @@ def generate_token():
 
 
 def get_token():
-    global __token
-
-    if __token is None:
-        __token = read_token()
-
-    if __token is None:
-        token_string = generate_token()
-        __token = {
-            'token': token_string,
-            'unix_elapsed_time': (datetime.now() - datetime(1970, 1, 1)).total_seconds() + SECONDS_DURATION_TOKEN
-        }
-        save_token(__token)
-    return __token
+    token_string = generate_token()
+    tkn = {
+        'token': token_string,
+        'unix_elapsed_time': (datetime.now() - datetime(1970, 1, 1)).total_seconds() + SECONDS_DURATION_TOKEN
+    }
+    return tkn
 
 
 def send_push_notification(device_token, data, production=True, is_retry=False):
@@ -119,7 +89,6 @@ def send_push_notification(device_token, data, production=True, is_retry=False):
         resp_error = resp.read()
         print(resp_error)
         # remove token
-        save_token(None)
         if not is_retry and resp.status == 400:
             j = json.loads(resp_error.decode('ascii'))
             if 'reason' in j and j['reason'] == 'BadDeviceToken':
