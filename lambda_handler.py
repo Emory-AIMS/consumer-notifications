@@ -21,7 +21,7 @@ def handle(event, context):
         if 'notifications' in payload:
             for notification in payload['notifications']:
                 if 'device_id' in notification and 'token' in notification \
-                        and 'platform' in notification and 'status' in notification and 'data' in notification:
+                        and 'platform' in notification and 'data' in notification:
                     d = notification['data']
                     if notification['platform'] == 'ios':
                         ios_push_notification.send_push_notification(notification['token'], d, production=True)
