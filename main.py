@@ -16,8 +16,9 @@ def polling_queue():
         messages = queue_read.receive_messages(WaitTimeSeconds=5, MaxNumberOfMessages=10)
         print('MESSAGE')
         for message in messages:
-            
+
             payload = json.loads(message.body)
+            print(payload)
 
             if 'notifications' in payload:
                 for notification in payload['notifications']:
