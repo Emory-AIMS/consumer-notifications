@@ -1,5 +1,6 @@
 
 import os
+import sys
 
 
 def get_sqs_url():
@@ -7,12 +8,11 @@ def get_sqs_url():
 
 
 def get_key_fcm():
-    # return config['CONFIG']['KEY_FCM']
-    return os.environ['KEY_FCM']
+    return sys.argv[1]
 
 
 def get_auth_secret():
-    secret = os.environ['AUTH_SECRET']
+    secret = sys.argv[2]
     private_value = secret.replace('\\n', '\n')
     return private_value
 
