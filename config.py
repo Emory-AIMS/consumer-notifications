@@ -13,6 +13,6 @@ def get_key_fcm():
 
 def get_auth_secret():
     secret = sys.argv[2]
-    private_value = secret.replace('\\n', '\n')
+    private_value = secret.replace('_', '\n')
     return private_value
 
