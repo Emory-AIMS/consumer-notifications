@@ -1,0 +1,10 @@
+[Unit]
+Description=Consumer Notifications.
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=KEY_FCM= DB_PASSWORD=AUTH_SECRET /usr/bin/python3 /home/ubuntu/consumer-notifications/main.py
+
+[Install]
+WantedBy=multi-user.target

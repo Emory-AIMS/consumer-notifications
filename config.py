@@ -1,10 +1,9 @@
 
 import os
-import configparser
 
 
 def get_sqs_url():
-    return os.environ['SQS_URL']
+    return 'https://sqs.us-east-1.amazonaws.com/746726732930/potential-infected-notification'
 
 
 def get_key_fcm():

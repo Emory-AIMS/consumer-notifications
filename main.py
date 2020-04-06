@@ -13,15 +13,15 @@ def polling_queue():
     queue_read = sqs_client.Queue(config.get_sqs_url())
 
     while 1:
-        messages = queue_read.receive_messages(WaitTimeSeconds=20)
-
+        messages = queue_read.receive_messages(WaitTimeSeconds=5, MaxNumberOfMessages=10)
+        print('MESSAGE')
         for message in messages:
-            print("Message received: {0}".format(message.body))
-
+            
             payload = json.loads(message.body)
 
             if 'notifications' in payload:
                 for notification in payload['notifications']:
+                    print(notification)
                     if 'token' in notification and 'platform' in notification and 'data' in notification:
                         d = notification['data']
                         if notification['platform'] == 'ios':
