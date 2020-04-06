@@ -10,7 +10,7 @@ from utils_notifications import get_warning_level
 def polling_queue():
     sqs_client = boto3.resource('sqs')
 
-    queue_read = sqs_client.Queue(config.get_sqs_notifications_name())
+    queue_read = sqs_client.Queue(config.get_sqs_url())
 
     while 1:
         messages = queue_read.receive_messages(WaitTimeSeconds=20)
@@ -18,30 +18,16 @@ def polling_queue():
         for message in messages:
             print("Message received: {0}".format(message.body))
 
-            body = json.loads(message.body)
+            payload = json.loads(message.body)
 
-            '''
-            {
-                'device_id': id_inter,
-                'token': interaction2info[id_inter]['token'],
-                'platform': interaction2info[id_inter]['platform'].lower(),
-                'status': 3
-            }
-            '''
-            if 'device_id' in body and 'token' in body and 'platform' in body and 'status' in body:
-                d = {
-                    'status': body['status'],
-                    'warning_level': get_warning_level(body['status']),
-                    'title': None,
-                    'message': None,
-                    'subtitle': None,
-                    'link': None,
-                    'language': None
-                }
-                if body['platform'] == 'ios':
-                    ios_push_notification.send_push_notification(body['token'], d, production=True)
-                else:
-                    android_push_notification.send_push_notification(body['token'], d)
+            if 'notifications' in payload:
+                for notification in payload['notifications']:
+                    if 'token' in notification and 'platform' in notification and 'data' in notification:
+                        d = notification['data']
+                        if notification['platform'] == 'ios':
+                            ios_push_notification.send_push_notification(notification['token'], d, production=True)
+                        else:
+                            android_push_notification.send_push_notification(notification['token'], d)
 
             message.delete()
 

@@ -3,6 +3,10 @@ import os
 import configparser
 
 
+def get_sqs_url():
+    return os.environ['SQS_URL']
+
+
 def get_key_fcm():
     # return config['CONFIG']['KEY_FCM']
     return os.environ['KEY_FCM']
