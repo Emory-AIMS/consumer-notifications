@@ -2,13 +2,16 @@
 import os
 import sys
 
+KEY_FCM = "XXXXXXX"
+
 
 def get_sqs_url():
-    return 'https://sqs.us-east-1.amazonaws.com/746726732930/potential-infected-notification'
+    return 'https://sqs.us-west-1.amazonaws.com/018890560418/potential-infected-notification'
 
 
 def get_key_fcm():
-    return sys.argv[1]
+    # return sys.argv[1]
+    return KEY_FCM
 
 
 def get_auth_secret():
