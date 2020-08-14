@@ -3,10 +3,11 @@ import os
 import sys
 
 KEY_FCM = "XXXXXXX"
+SQS_QUE_URL_NOTIFICATIONS = "XXXXXXXXX"
 
 
 def get_sqs_url():
-    return 'https://sqs.us-west-1.amazonaws.com/018890560418/potential-infected-notification'
+    return SQS_QUE_URL_NOTIFICATIONS
 
 
 def get_key_fcm():

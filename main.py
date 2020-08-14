@@ -8,7 +8,7 @@ from utils_notifications import get_warning_level
 
 
 def polling_queue():
-    sqs_client = boto3.resource('sqs')
+    sqs_client = boto3.resource('sqs', region_name='us-west-1')
 
     queue_read = sqs_client.Queue(config.get_sqs_url())
 
